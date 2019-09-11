@@ -2,6 +2,7 @@ import sqlite3
 import unittest
 import unittest.mock
 import os
+from models import Contact
 from DAOs import ContactDAO
 
 # To complete...
@@ -24,7 +25,9 @@ class TestContactDAO(unittest.TestCase):
             self.fail("Should not have raised sqlite3.OperationalError")
     
     def test_when_add_is_called_it_should_return_an_autoincremented_id(self):
-        pass
+
+        for id in range ( 1, 10):
+            self.assertEqual(self.contactDAO.add(Contact(0, "Name"+str(id), "lastName"+str(id), 111+id, "mail"+str(id), True, "date")), id)
     
     def test_get_by_id_after_add_should_return_inserted_value(self):
         pass

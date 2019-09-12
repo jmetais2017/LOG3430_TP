@@ -1,6 +1,7 @@
 from DAOs import ContactDAO
 from models import Contact 
 from datetime import datetime
+from email.utils import parseaddr
 
 class UndefinedID(Exception):
    """Raised when the id value is not defined"""
@@ -121,10 +122,12 @@ class ContactService:
         '''
         Return True if the phone number is a valid american phone number otherwise, it returns False.
         '''
-        return True
+        phone = phone.replace("(","").replace(")","").replace("-","")
+        return phone.isdigit()
     # To complete and to propose unit test for it
     def check_mail(self, mail):
         '''
         Return True if the mail address is valid otherwise, it returns False.
         '''
-        return True
+        split = mail.split('@')
+        return len(split) == 2 and split[0] != '' and split[1].endswith('.com')

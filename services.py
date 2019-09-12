@@ -123,11 +123,11 @@ class ContactService:
         Return True if the phone number is a valid american phone number otherwise, it returns False.
         '''
         phone = phone.replace("(","").replace(")","").replace("-","")
-        return phone.isdigit()
+        return phone.isdigit() and len(phone) == 10
     # To complete and to propose unit test for it
     def check_mail(self, mail):
         '''
         Return True if the mail address is valid otherwise, it returns False.
         '''
         split = mail.split('@')
-        return len(split) == 2 and split[0] != '' and split[1].endswith('.com')
+        return len(split) == 2 and split[0] != '' and split[1].endswith('.com') and len(split[1]) >= 4

@@ -83,8 +83,56 @@ class TestContactService(unittest.TestCase):
     def test_when_retrieve_contact_is_called_with_names_and_DAO_delete_by_names_returns_zero_it_should_raise_NotExistedItem(self):
         self.contactDAO.delete_by_names.return_value = 0
         self.assertRaises(NotExistedItem, self.contactService.delete_contact, None, "Name", "lastName")
-    
 
+
+    #test pour check_phones
+    def test_valid_and_invalid_phones(self):
+
+        #numeros valides
+        self.assertTrue(self.contactService.check_phone("1234567890"))
+        self.assertTrue(self.contactService.check_phone("123-456-7890"))
+        self.assertTrue(self.contactService.check_phone("(123)-456-7890"))
+        
+        #caracteres invalides
+        self.assertFalse(self.contactService.check_phone("12345a7890"))
+        self.assertFalse(self.contactService.check_phone("12*-456-7890"))
+        self.assertFalse(self.contactService.check_phone("(123)-456-&890"))
+
+        #nombre de chiffres invalides
+        self.assertFalse(self.contactService.check_phone("123457890"))
+        self.assertFalse(self.contactService.check_phone("13-456-790"))
+        self.assertFalse(self.contactService.check_phone("(123)-56-780"))
+        self.assertFalse(self.contactService.check_phone("12345678901"))
+        self.assertFalse(self.contactService.check_phone("123-4526-78904"))
+        self.assertFalse(self.contactService.check_phone("(1233)-456-7890"))
+
+    #test pour check_mail
+    def test_valid_and_invalid_mail(self):
+        names = ["George", "James", "John", "Sarah"]
+        emails = ["gmail", "hotmail", "yopmail"]
+
+        #valid emails
+        for name in names:
+            for email in emails:
+                self.assertTrue(self.contactService.check_mail(name + "@" + email + ".com"))
+
+        #missing name
+        for email in emails:
+            self.assertFalse(self.contactService.check_mail("@" + email + ".com"))
+
+        #missing provider
+        for name in names:
+            self.assertTrue(self.contactService.check_mail(name + "@.com"))
+
+        #missing @
+        for name in names:
+            for email in emails:
+                self.assertFalse(self.contactService.check_mail(name + email + ".com"))
+
+        #missing .com
+        for name in names:
+            for email in emails:
+                self.assertFalse(self.contactService.check_mail(name + "@" + email + ".net"))
     
 if __name__ == '__main__':
     unittest.main()

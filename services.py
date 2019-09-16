@@ -105,6 +105,7 @@ class ContactService:
         else:
             if self.contactDAO.delete_by_names(first_name, last_name) == 0:
                 raise NotExistedItem("No contact with first name <{}> and last name <{}>".format(first_name, last_name))
+    
     # To propose unit tests for this method
     def verify_contacts_status(self):
         '''
@@ -117,13 +118,17 @@ class ContactService:
             delta = datetime.now() - datetime.fromtimestamp(contact.updated_date)
             if delta.days > 1095:
                 self.contactDAO.deactivate(contact.id)
+   
     # To complete and to propose unit test for it
     def check_phone(self, phone):
         '''
         Return True if the phone number is a valid american phone number otherwise, it returns False.
         '''
+        #On supprime les caractères spéciaux
         phone = phone.replace("(","").replace(")","").replace("-","")
+        #On vérifie qu'on a bien un nombre à 10 chiffres
         return phone.isdigit() and len(phone) == 10
+    
     # To complete and to propose unit test for it
     def check_mail(self, mail):
         '''

@@ -119,7 +119,7 @@ class TestContactDAO(unittest.TestCase):
         self.assertEqual(self.contactDAO.delete_by_id(1), 0)
 
 
-    #Fail
+    #Seul test qui ne passait pas initialement
     def test_after_deleting_contact_by_names_get_item_with_id_should_return_None(self):
         
         #On crée un contact pour les besoins du test, puis on l'ajoute

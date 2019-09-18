@@ -1,7 +1,7 @@
 import sqlite3
 from models import Contact
 
-class ContactDAO: 
+class ContactDAO:
 
     def __init__(self, db_file):
         self.db_file = db_file
@@ -139,7 +139,7 @@ class ContactDAO:
 
     def delete_by_id(self, id):
         '''
-        Delete an item with the provided id. 
+        Delete an item with the provided id.
         '''
         with sqlite3.connect(self.db_file) as connection:
             cursor = connection.cursor()
@@ -164,7 +164,12 @@ class ContactDAO:
                         WHERE
                             first_name = ? AND last_name = ?
                         ''', (first_name, last_name))
-        connection.close()            
+
+        #Correction de l'erreur détectée par test_after_deleting_contact_by_names_get_item_with_id_should_return_None :
+        #Utiliser commit pour que la requête soit effective
+        #connection.close()
+        connection.commit()
+
         return cursor.rowcount
 
     def list(self, updated=None):
@@ -208,4 +213,3 @@ class ContactDAO:
             for row in cursor.fetchall():
                 contacts.append(Contact(*row))
             return contacts
-        

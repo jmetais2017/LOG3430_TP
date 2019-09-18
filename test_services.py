@@ -34,9 +34,9 @@ class TestContactService(unittest.TestCase):
 
 
     def test_when_contact_is_created_and_DAO_get_by_names_returns_contact_it_should_raise_AlreadyExistedItem(self):
-        #On définit la valeur de retour de get_by_names comme le contact qui sera créé par la suite
+        #On définit la valeur de retour de get_by_names comme un contact
         self.contactDAO.get_by_names.return_value = Contact(0, "Name", "lastName", '123-456-7891', "mail", True, "date")
-        #On teste si la création de ce contact lève l'exception attendue
+        #On teste si la création d'un nouveau contact lève l'exception attendue
         self.assertRaises(AlreadyExistedItem, self.contactService.create_contact,'Houssem','Ben Braiek','123-456-7891','houssem.bb@gmail.com')
     
     
@@ -92,6 +92,22 @@ class TestContactService(unittest.TestCase):
     def test_when_retrieve_contact_is_called_with_names_and_DAO_delete_by_names_returns_zero_it_should_raise_NotExistedItem(self):
         self.contactDAO.delete_by_names.return_value = 0
         self.assertRaises(NotExistedItem, self.contactService.delete_contact, None, "Name", "lastName")
+
+
+    #Tests pour verify_contacts_status
+    
+    def test_when_verify_contacts_status_is_called_and_there_are_active_contacts_older_than_3_years_then_deactivate_should_be_called(self):
+        #Mock pour verify_contacts_status
+        self.contactDAO.deactivate.return_value = 0
+        
+        #Mock pour retrieve_active_contacts : on crée un contact avec une date plus ancienne que 2016 (marge de 3 ans)
+        #Par exemple, une date de 0 correspond au 1er janvier 1970
+        contact = Contact(0, "Name", "lastName", '123-456-7891', 'houssem.bb@gmail.com', True, 0)
+        self.contactDAO.list.return_value = [contact]
+
+        self.contactService.verify_contacts_status()
+        #On vérifie que deactivate a été appelée
+        self.assertTrue(self.contactDAO.deactivate.called)
 
 
     #Tests pour check_phones

@@ -106,18 +106,16 @@ class ContactService:
             if self.contactDAO.delete_by_names(first_name, last_name) == 0:
                 raise NotExistedItem("No contact with first name <{}> and last name <{}>".format(first_name, last_name))
     
+    
     # To propose unit tests for this method
     def verify_contacts_status(self):
-        '''
-        Return contact that has the provided id. If no contact is found
-        with that id, raise UndefinedID.  If no contact is found
-        with given names, raise NotExistedItem.
-        '''
+        
         contacts = self.retrieve_active_contacts()
         for contact in contacts:
             delta = datetime.now() - datetime.fromtimestamp(contact.updated_date)
             if delta.days > 1095:
                 self.contactDAO.deactivate(contact.id)
+                
    
     # To complete and to propose unit test for it
     def check_phone(self, phone):

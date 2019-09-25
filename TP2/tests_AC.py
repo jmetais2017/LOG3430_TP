@@ -55,8 +55,54 @@ class TestGraphAC(unittest.TestCase):
                 self.assertEqual(graph.V(), nbVertices)
                 self.assertAlmostEqual(graph.E(), sum_bernoulli(nbVertices, probability))
 
+    def test_bipartite_raises_valueError_with_negative_values(self):
+        self.assertRaises(ValueError, generators.bipartite, -10, 10, 10)
+        self.assertRaises(ValueError, generators.bipartite, 10, -10, 10)
+        self.assertRaises(ValueError, generators.bipartite, 10, 10, -10)
+        self.assertRaises(ValueError, generators.bipartite, -10, -10, 10)
+        self.assertRaises(ValueError, generators.bipartite, -10, -10, -10)
+
+    def test_bipartite_raises_valueError_when_too_much_edges(self):
+        for v1 in range(1,3):
+            for v2 in range(1,3):
+                for e in range(v1 * v2 + 1, v1 * v2 + 3):
+                    self.assertRaises(ValueError, generators.bipartite, v1, v2, e)
+
     def test_bipartite(self):
-        pass
+        for v1 in range(1,3):
+            for v2 in range(1,3):
+                for e in range(1, v1 * v2):
+                    graph = generators.bipartite(v1, v2, e)
+                    self.assertEquals(graph.V(), v1+v2)
+                    self.assertEquals(graph.E(), e)
+
+                    vertices1 = []
+                    vertices2 = []
+
+                    edges = graph.edges()
+
+                    firstSet = list(edges[0])
+
+                    vertices1.append(firstSet[0])
+                    vertices2.append(firstSet[1])
+
+                    for edge in edges:
+                        asList = list(edge)
+
+                        if(vertices1.count(asList[0]) > 0):
+                            
+                            self.assertEquals(vertices1.count(asList[1]), 0)
+
+                            if(vertices2.count(asList[1]) == 0):
+                                vertices2.append(asList[1])
+
+                        elif(vertices2.count(asList[0]) > 0):
+                            
+                            self.assertEquals(vertices2.count(asList[1]), 0)
+
+                            if(vertices1.count(asList[1]) == 0):
+                                vertices1.append(asList[1])
+                            
 
     def test_bipartite_with_probability(self):
         pass

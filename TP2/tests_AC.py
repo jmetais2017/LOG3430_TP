@@ -7,7 +7,7 @@ import utils
 def sum_bernoulli(V, p):
     sum = 0
 
-    for x in range(0, (int)(V*(V-1)/2)):
+    for x in range(V):
         if(utils.bernoulli(p)):
             sum = sum + 1
 
@@ -53,7 +53,7 @@ class TestGraphAC(unittest.TestCase):
             for probability in [0.2, 0.5, 0.8, 1]:
                 graph = generators.simple_with_probability(nbVertices, probability)
                 self.assertEqual(graph.V(), nbVertices)
-                self.assertAlmostEqual(graph.E(), sum_bernoulli(nbVertices, probability))
+                self.assertAlmostEqual(graph.E(), sum_bernoulli((int)(nbVertices*(nbVertices-1)/2), probability))
 
     def test_bipartite_raises_valueError_with_negative_values(self):
         self.assertRaises(ValueError, generators.bipartite, -10, 10, 10)
@@ -104,8 +104,45 @@ class TestGraphAC(unittest.TestCase):
                                 vertices1.append(asList[1])
                             
 
+    def test_bipartite_with_probability_with_invalid_probability(self):
+        for nbVertices in range(0, 5):
+            self.assertRaises(ValueError, generators.bipartite_with_probability, 0, 0, -0.01)
+            self.assertRaises(ValueError, generators.bipartite_with_probability, 0, 0, 1.01)
+
     def test_bipartite_with_probability(self):
-        pass
+        for v1 in range(4,6):
+            for v2 in range(4,6):
+                for probability in [0.2, 0.5, 0.8, 1]:
+                    graph = generators.bipartite_with_probability(v1, v2, probability)
+                    self.assertEquals(graph.V(), v1+v2)
+                    self.assertAlmostEqual(graph.E(), sum_bernoulli(v1*v2, probability))
+
+                    vertices1 = []
+                    vertices2 = []
+
+                    edges = graph.edges()
+
+                    firstSet = list(edges[0])
+
+                    vertices1.append(firstSet[0])
+                    vertices2.append(firstSet[1])
+
+                    for edge in edges:
+                        asList = list(edge)
+
+                        if(vertices1.count(asList[0]) > 0):
+                            
+                            self.assertEquals(vertices1.count(asList[1]), 0)
+
+                            if(vertices2.count(asList[1]) == 0):
+                                vertices2.append(asList[1])
+
+                        elif(vertices2.count(asList[0]) > 0):
+                            
+                            self.assertEquals(vertices2.count(asList[1]), 0)
+
+                            if(vertices1.count(asList[1]) == 0):
+                                vertices1.append(asList[1])
 
     def test_eulerian_cycle(self):
         pass

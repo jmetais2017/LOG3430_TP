@@ -43,15 +43,12 @@ class TestGraphAC(unittest.TestCase):
             for nbEdges in range((int)(nbVertices*(nbVertices-1)/2) + 1, (int)(nbVertices*(nbVertices-1)/2) + 3):
                 self.assertRaises(ValueError, generators.simple, nbVertices, nbEdges)
 
-    def test_simple_with_probability(self):
-        
+    def test_simple_with_probability_with_invalid_probability(self):
         for nbVertices in range(0, 5):
-            generators.simple_with_probability(nbVertices, 0) # test limite, pas d'exception lancee
-            generators.simple_with_probability(nbVertices, 1) # test limite, pas d'exception lancee
             self.assertRaises(ValueError, generators.simple_with_probability, nbVertices, -0.01)
             self.assertRaises(ValueError, generators.simple_with_probability, nbVertices, 1.01)
 
-
+    def test_simple_with_probability(self):
         for nbVertices in range(10, 20):
             for probability in [0.2, 0.5, 0.8, 1]:
                 graph = generators.simple_with_probability(nbVertices, probability)

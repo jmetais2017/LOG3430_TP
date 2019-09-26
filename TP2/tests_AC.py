@@ -170,15 +170,31 @@ class TestGraphAC(unittest.TestCase):
 
 
 #EULERIAN_CYCLE
+    def test_eulerian_cycle_when_v_is_zero_or_negative_must_raise_valueError(self):
+        self.assertRaises(ValueError, generators.eulerianCycle, 0, 10)
+        self.assertRaises(ValueError, generators.eulerianCycle, -10, 10)
+
+    def test_eulerian_cycle_when_e_is_negative_must_raise_valueError(self):
+        self.assertRaises(ValueError, generators.eulerianCycle, 10, -10)
+        self.assertRaises(ValueError, generators.eulerianCycle, -10, -10)
 
     def test_eulerian_cycle(self):
-        pass
+        for nbVertices in range(4, 10):
+            for nbEdges in range(4, nbVertices):
+                graph = generators.eulerianCycle(nbVertices, nbEdges)
+                self.assertEqual(graph.V(), nbVertices)
+                #self.assertEqual(graph.E(), nbEdges)
 
 
 #REGULAR
 
     def test_regular(self):
-        pass
+        for nbVertices in range(3, 10):
+            for nbEdges in range(0, nbVertices-1):
+                if((nbVertices*nbEdges)%2==0):
+                    graph = generators.eulerianPath(nbVertices, nbEdges)
+                    self.assertEqual(graph.V(), nbVertices)
+                    self.assertEqual(graph.E(), nbEdges * nbVertices)
 
 if __name__ == '__main__':
     unittest.main()

@@ -62,6 +62,10 @@ def bipartite(V1, V2, E):
      *    containing a total of E edges
      * @raises ValueError if no such simple bipartite graph exists
     '''
+    if V1 < 0:
+        raise ValueError("V1 must be positive")
+    if V2 < 0:
+        raise ValueError("V2 must be positive")
     if E > V1*V2:
         raise ValueError('Too many edges')
     if E < 0:
@@ -90,6 +94,10 @@ def bipartite_with_probability(V1, V2, p):
      containing each possible edge with probability p
     @raises ValueError if probability is not between 0 and 1
     '''
+    if V1 < 0:
+        raise ValueError("V1 must be positive")
+    if V2 < 0:
+        raise ValueError("V2 must be positive")
     if p < 0.0 or p > 1.0:
         raise ValueError('Probability must be between 0 and 1')
     vertices = [i for i in range(V1 + V2)]
@@ -150,6 +158,8 @@ def eulerianCycle(V, E):
     @return a graph that is an Eulerian cycle on V vertices and E edges
     @raises ValueError if either V <= 0 or E <= 0
     '''
+    if E > V*(V-1)/2:
+        raise ValueError("Too many edges")
     if E <= 0:
         raise ValueError("An Eulerian cycle must have at least one edge")
     if V <= 0:
@@ -245,6 +255,12 @@ def regular(V, k):
     @param k degree of each vertex
     @return a uniformly random k-regular graph on V vertices.
     '''
+    if k >= V:
+        raise ValueError("Too many edges")
+    if k < 0:
+        raise ValueError("number of edges must be positive")
+    if V <= 0:
+        raise ValueError("number of vertices must be positive")
     if V*k % 2 != 0:
         raise ValueError("Number of vertices * k must be even")
     G = Graph(V)

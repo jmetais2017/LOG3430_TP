@@ -181,20 +181,48 @@ class TestGraphAC(unittest.TestCase):
     def test_eulerian_cycle(self):
         for nbVertices in range(4, 10):
             for nbEdges in range(4, nbVertices):
+
                 graph = generators.eulerianCycle(nbVertices, nbEdges)
                 self.assertEqual(graph.V(), nbVertices)
-                #self.assertEqual(graph.E(), nbEdges)
+                self.assertEqual(graph.E(), nbEdges)
+
+                nbEdgesPerVertice = [0] * nbVertices
+                
+                for edge in graph.edges():
+                    if (len(edge)==1):
+                        nbEdgesPerVertice[list(edge)[0]] += 2
+                    else:
+                        for v in edge:
+                            nbEdgesPerVertice[v] += 1
+
+                for i in nbEdgesPerVertice:
+                    self.assertTrue(i%2==0)
 
 
 #REGULAR
 
-    def test_regular(self):
+    def test_regular_when_product_of_V_and_k_is_not_even_should_raise_valueError(self):
         for nbVertices in range(3, 10):
-            for nbEdges in range(0, nbVertices-1):
+            for nbEdges in range(0, nbVertices):
+                if((nbVertices*nbEdges)%2==1):
+                    self.assertRaises(ValueError, generators.regular, nbVertices, nbEdges)
+
+    def test_regular(self):
+        for nbVertices in range(3, 6):
+            for nbEdges in range(0, nbVertices * nbVertices // 4):
                 if((nbVertices*nbEdges)%2==0):
-                    graph = generators.eulerianPath(nbVertices, nbEdges)
+                    graph = generators.regular(nbVertices, nbEdges)
                     self.assertEqual(graph.V(), nbVertices)
-                    self.assertEqual(graph.E(), nbEdges * nbVertices)
+
+                    nbEdgesPerVertice = [0] * nbVertices
+
+                    for edge in graph.edges():
+                        
+                        if (len(edge)==1):
+                            nbEdgesPerVertice[list(edge)[0]] += 2
+                        else:
+                            for v in edge:
+                                nbEdgesPerVertice[v] += 1
 
 if __name__ == '__main__':
     unittest.main()

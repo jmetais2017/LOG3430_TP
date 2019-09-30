@@ -36,7 +36,7 @@ class TestGraphAC(unittest.TestCase):
                 self.assertEqual(graph.E(), nbEdges)
 
     #Un nombre de noeuds négatif doit donner une erreur :
-    def test_simple_raises_value_error_when_vertices_is_negative(self):
+    def test_simple_raises_value_error_when_vertices_is_same(self):
         for nbVertices in range(-3, -1): # V invalides
             for nbEdges in [-3, -1, 0, 3, 5]: # E valides et invalides
 
@@ -279,9 +279,9 @@ class TestGraphAC(unittest.TestCase):
 #REGULAR
 
     #Un nombre de noeuds négatif doit donner une erreur :
-    def test_regular_raises_value_error_when_vertices_is_negative(self):
-        for nbVertices in range(-3, -1): # V invalides
-            for nbEdges in [-3, -1, 0, 3, 5]: # E valides et invalides
+    def test_regular_raises_value_error_when_vertices_is_smaller_than_3(self):
+        for nbVertices in range(-3, 3): # V invalides
+            for nbEdges in [-3, -1, 0, 4, 5]: # E valides et invalides
 
                 #on s'assure qu'une erreur est lancée
                 self.assertRaises(ValueError, generators.regular, nbVertices, nbEdges)

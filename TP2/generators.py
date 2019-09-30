@@ -259,8 +259,8 @@ def regular(V, k):
         raise ValueError("Too many edges")
     if k < 0:
         raise ValueError("number of edges must be positive")
-    if V <= 0:
-        raise ValueError("number of vertices must be positive")
+    if V < 3:
+        raise ValueError("number of vertices must be greater or equal to 3")
     if V*k % 2 != 0:
         raise ValueError("Number of vertices * k must be even")
     G = Graph(V)

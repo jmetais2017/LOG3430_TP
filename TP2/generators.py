@@ -129,6 +129,18 @@ def cycle(V):
     G.add_edge((vertices[V-1], vertices[0]))
     return G
 
+def hasSameEdges(V):
+    edges = []
+
+    for i in range(len(V)):
+        edges.append({V[i], V[(i+1)%len(V)]})
+
+    for m in range(1, len(V)):
+        for n in range(m):
+            if(edges[m] == edges[n]):
+                return True
+
+    return False
 
 def eulerianCycle(V, E):
     '''
@@ -144,6 +156,10 @@ def eulerianCycle(V, E):
         raise ValueError("An Eulerian cycle must have at least one vertex")
     G = Graph(V)
     vertices = [rand.randrange(V) for i in range(E)]
+
+    while(hasSameEdges(vertices)):
+        vertices = [rand.randrange(V) for i in range(E)]
+
     for i in range(E-1):
         G.add_edge((vertices[i], vertices[i+1]))
     G.add_edge((vertices[E-1], vertices[0]))

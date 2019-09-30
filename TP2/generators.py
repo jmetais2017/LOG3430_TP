@@ -224,6 +224,18 @@ def star(V):
         G.add_edge((vertices[0], vertices[i]))    
     return G
 
+def regularHasSameEdges(V):
+    edges = []
+    for i in range(len(V)//2):
+        edges.append({V[2*i], V[2*i + 1]})
+
+    for m in range(1, len(edges)):
+        for n in range(m):
+            if(edges[m] == edges[n]):
+                return True
+
+    return False
+
 def regular(V, k):
     '''
     Returns a uniformly random k-regular graph on V vertices
@@ -244,6 +256,10 @@ def regular(V, k):
 
     # pick a random perfect matching
     rand.shuffle(vertices)
+
+    while(regularHasSameEdges(vertices)):
+        rand.shuffle(vertices)
+
     for i in range(V*k//2):
         G.add_edge((vertices[2*i], vertices[2*i + 1]))
     return G

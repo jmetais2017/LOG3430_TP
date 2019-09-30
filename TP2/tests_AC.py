@@ -224,5 +224,8 @@ class TestGraphAC(unittest.TestCase):
                             for v in edge:
                                 nbEdgesPerVertice[v] += 1
 
+                    for i in nbEdgesPerVertice:
+                        self.assertEqual(i, nbEdges)
+
 if __name__ == '__main__':
     unittest.main()

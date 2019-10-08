@@ -1,41 +1,301 @@
 import unittest
 import unittest.mock
 import os
-import generators 
+import generators
+import utils
+
+
+
+#fonction utilitaire permettant de calculer la somme de bernoulli
+def sum_bernoulli(V, p):
+    sum = 0
+    for x in range(V):
+        if(utils.bernoulli(p)):
+            sum = sum + 1
+    return sum
+
+
 
 class TestGraphEC(unittest.TestCase):
 
+    #on suppose que setup et teardown doivent etre presents par convention
     def setUp(self):
         pass
 
     def tearDown(self):
         pass
 
-    def test_simple(self):
 
-        for nbVertices in range(1, 10):
-            for nbEdges in range(1, nbVertices):
+
+#SIMPLE
+
+    #Tests sur entrées valides :
+    #Les valeurs positives telles que E <= V(V-1)/2 sont valides
+    def test_simple_valid_values(self):
+        #On teste tous les nombres d'arêtes possibles pour le nombre de sommets choisi
+        for nbVertices in range(0, 10):
+            for nbEdges in range(0, nbVertices*(nbVertices-1)//2):
                 graph = generators.simple(nbVertices, nbEdges)
                 self.assertEqual(graph.V(), nbVertices)
                 self.assertEqual(graph.E(), nbEdges)
 
 
-        pass
+    #Un nombre de noeuds négatif ou un nombre d'arêtes négatif doit donner une erreur :
+    def test_simple_raises_value_error_when_vertices_is_same(self):
+        for nbVertices in range(-3, -1): # V invalides
+            for nbEdges in [-3, -1]: # E invalides (critère EC)
+                #on s'assure qu'une erreur est lancée
+                self.assertRaises(ValueError, generators.simple, nbVertices, nbEdges)
 
+
+    #E > V(V-1)/2 doit donner une erreur
+    def test_simple_raises_value_error_when_edges_bigger_than_possible(self):
+        for nbVertices in range(1, 10): # V valides
+            for nbEdges in range((int)(nbVertices*(nbVertices-1)/2) + 1, (int)(nbVertices*(nbVertices-1)/2) + 3): # E trop élevé
+                #on s'assure qu'une erreur est lancée
+                self.assertRaises(ValueError, generators.simple, nbVertices, nbEdges)
+
+
+
+#SIMPLE_WITH_PROBABILITY
+
+
+    #Tests de valeurs valides de probabilité
     def test_simple_with_probability(self):
-        pass
+        for nbVertices in range(5,8): # V valides
+            for probability in [0.2, 0.5, 0.8, 1]: # P valides
+                graph = generators.simple_with_probability(nbVertices, probability)
+                #verifier nbVertices
+                self.assertEqual(graph.V(), nbVertices)
+                #On vérifie que l'on a bien généré approximativement le bon nombre d'arêtes à l'aide de la théorie de la probabilité
+                self.assertAlmostEqual(graph.E(), sum_bernoulli((int)(nbVertices*(nbVertices-1)/2), probability))
 
+
+    #Une probabilité invalide (P n'appartenant pas a [0, 1]) ou un nombre de vertices invalide doit donner une erreur
+    def test_simple_with_probability_with_invalid_probability(self):
+        for V in [-10, -1]: # V invalide
+            for P in [-0.01, 1.01]: # P invalide  (critère EC)
+                #on s'assure qu'une erreur est lancée
+                self.assertRaises(ValueError, generators.simple_with_probability, V, P)
+
+
+
+#BIPARTITE
+
+
+    #Test pour bipartite avec des entrees valides
     def test_bipartite(self):
-        pass
+        for v1 in range(1,3):
+            for v2 in range(1,3):
+                for e in range(1, v1 * v2):
+                    graph = generators.bipartite(v1, v2, e)
+                    self.assertEqual(graph.V(), v1+v2) # test V
+                    self.assertEqual(graph.E(), e) # test E
 
+                    #on va essayer d'extraire les noeuds en 2 sous-graphes bipartites
+                    vertices1 = []
+                    vertices2 = []
+
+                    edges = graph.edges()
+
+                    firstSet = list(edges[0])
+
+                    vertices1.append(firstSet[0])
+                    vertices2.append(firstSet[1])
+
+                    for edge in edges:
+                        asList = list(edge)
+
+                        if(vertices1.count(asList[0]) > 0):
+
+                            #on s'assure les noeuds de l'arrete ne se trouvent pas dans le meme sous-ensemble
+                            self.assertEqual(vertices1.count(asList[1]), 0)
+
+                            if(vertices2.count(asList[1]) == 0):
+                                vertices2.append(asList[1])
+
+                        elif(vertices2.count(asList[0]) > 0):
+
+                            #on s'assure les noeuds de l'arrete ne se trouvent pas dans le meme sous-ensemble
+                            self.assertEqual(vertices2.count(asList[1]), 0)
+
+                            if(vertices1.count(asList[1]) == 0):
+                                vertices1.append(asList[1])
+
+
+    #Test quand V1 est negatif ou V2 est negatif ou E est negatif  (critère EC)
+    def test_bipartite_raises_valueError_with_negative_V1(self):
+        for V1 in [-2, -1]: # V1 invalides
+            for V2 in [-2, -1]: # V2 invalides
+                for E in [-2, -1]: # E invalides
+                    self.assertRaises(ValueError, generators.bipartite, V1, V2, E)
+
+
+    #E > V1*V2 doit donner une erreur
+    def test_bipartite_raises_valueError_when_too_much_edges(self):
+        for v1 in [-2, -1, 2, 3, 4]: # V1 valides et invalides
+            for v2 in [-2, -1, 2, 3, 4]: # V2 valdies et invalides
+                for e in range(v1 * v2 + 1, v1 * v2 + 3):
+                    self.assertRaises(ValueError, generators.bipartite, v1, v2, e)
+
+
+
+#BIPARTITE_WITH_PROBABILITY
+
+
+    #Entrées valides
     def test_bipartite_with_probability(self):
-        pass
+        for v1 in range(4,6):
+            for v2 in range(4,6):
+                for probability in [0.2, 0.5, 0.8, 1]:
+                    graph = generators.bipartite_with_probability(v1, v2, probability)
+                    self.assertEqual(graph.V(), v1+v2) # verifier V
 
+                    #on verifie le nombre d'arrete a l'aide de la probabilite
+                    self.assertAlmostEqual(graph.E(), sum_bernoulli(v1*v2, probability))
+
+                    #on va essayer d'extraire les noeuds en 2 sous-graphes bipartites
+                    vertices1 = []
+                    vertices2 = []
+
+                    edges = graph.edges()
+
+                    firstSet = list(edges[0])
+
+                    vertices1.append(firstSet[0])
+                    vertices2.append(firstSet[1])
+
+                    for edge in edges:
+                        asList = list(edge)
+
+                        if(vertices1.count(asList[0]) > 0):
+
+                            #on s'assure les noeuds de l'arrete ne se trouvent pas dans le meme sous-ensemble
+                            self.assertEqual(vertices1.count(asList[1]), 0)
+
+                            if(vertices2.count(asList[1]) == 0):
+                                vertices2.append(asList[1])
+
+                        elif(vertices2.count(asList[0]) > 0):
+
+                            #on s'assure les noeuds de l'arrete ne se trouvent pas dans le meme sous-ensemble
+                            self.assertEqual(vertices2.count(asList[1]), 0)
+
+                            if(vertices1.count(asList[1]) == 0):
+                                vertices1.append(asList[1])
+
+
+    #Test quand V1 est negatif ou V2 est negatif ou P est invalide (critère EC)
+    def test_bipartite_with_probability_raises_valueError_with_negative_V1(self):
+        for V1 in [-2, -1]: # V1 invalides
+            for V2 in [-2, -1]: # V2 invalides
+                for P in [-0.01, 1.01]: # P invalides
+                    self.assertRaises(ValueError, generators.bipartite_with_probability, V1, V2, P)
+
+
+#EULERIAN_CYCLE
+
+
+    #Test cycle eulerien avec des valeurs valides
     def test_eulerian_cycle(self):
-        pass
+        for nbVertices in range(4, 10):
+            for nbEdges in range(4, nbVertices * (nbVertices-1) // 4):
 
+                graph = generators.eulerianCycle(nbVertices, nbEdges)
+                self.assertEqual(graph.V(), nbVertices)
+                self.assertEqual(graph.E(), nbEdges)
+
+                # on compte combien d'arretes chaque noeud possede
+                nbEdgesPerVertice = [0] * nbVertices
+
+                for edge in graph.edges():
+                    #pour les noeuds qui pointent vers eux memes
+                    if (len(edge)==1):
+                        nbEdgesPerVertice[list(edge)[0]] += 2
+                    else:
+                        for v in edge:
+                            nbEdgesPerVertice[v] += 1
+
+                #un graphe est un cycle eulerien si et seulement si
+                #chaque noeud possede un nombre pair d'arretes
+                #(Theoreme d'Euler sur les cycles euleriens)
+                for i in nbEdgesPerVertice:
+                    self.assertTrue(i%2==0)
+
+
+    #Un nombre de noeuds négatif ou un nombre d'arêtes négatif doit donner une erreur :
+    def test_eulerian_cycle_raises_value_error_when_vertices_is_negative(self):
+        for nbVertices in range(-3, -1): # V invalides
+            for nbEdges in [-3, -1]: # E invalides
+                #on s'assure qu'une erreur est lancée
+                self.assertRaises(ValueError, generators.eulerianCycle, nbVertices, nbEdges)
+
+
+    #E > V(V-1)/2 doit donner une erreur
+    def test_eulerian_cycle_raises_value_error_when_edges_bigger_than_possible(self):
+        for nbVertices in range(1, 10): # V valides
+            for nbEdges in range((int)(nbVertices*(nbVertices-1)/2) + 1, (int)(nbVertices*(nbVertices-1)/2) + 3): # E trop gros
+                #on s'assure qu'une erreur est lancée
+                self.assertRaises(ValueError, generators.eulerianCycle, nbVertices, nbEdges)
+
+
+
+#REGULAR
+
+
+    #Test regular avec des parametres valides
     def test_regular(self):
-        pass
+        for nbVertices in range(3, 6):
+            for k in range(0, nbVertices):
+                if((nbVertices*k)%2==0):
+                    graph = generators.regular(nbVertices, k)
+                    self.assertEqual(graph.V(), nbVertices) # test V
+                    self.assertEqual(graph.E(), k * nbVertices // 2) # test E
+
+                    #on compte le nombre d'arretes connectes a chaque noeud
+                    nbEdgesPerVertice = [0] * nbVertices
+
+                    for edge in graph.edges():
+
+                        if (len(edge)==1):
+                            #pour les noeuds qui pointent vers eux memes
+                            nbEdgesPerVertice[list(edge)[0]] += 2
+                        else:
+                            for v in edge:
+                                nbEdgesPerVertice[v] += 1
+
+                    #le graphe est regulier si chaque noeud possede
+                    #le meme nombre d'arrete et, dans notre cas, ce
+                    #nombre correspond a la valeur desiree
+                    for i in nbEdgesPerVertice:
+                        self.assertEqual(i, k)
+
+
+    #Un nombre de noeuds négatif ou un nombre d'arêtes négatif doit donner une erreur :
+    def test_regular_raises_value_error_when_vertices_is_smaller_than_3(self):
+        for nbVertices in range(-3, 3): # V invalides
+            for k in [-3, -1]: # k invalides
+                #on s'assure qu'une erreur est lancée
+                self.assertRaises(ValueError, generators.regular, nbVertices, k)
+
+
+    #E > V(V-1)/2 doit donner une erreur
+    def test_regular_raises_value_error_when_edges_bigger_than_possible(self):
+        for nbVertices in range(1, 10): # V valides
+            for k in range(nbVertices, nbVertices+3): # E trop gros
+                #on s'assure qu'une erreur est lancée
+                self.assertRaises(ValueError, generators.regular, nbVertices, k)
+
+
+    #Un graphe regulier ne peut exister que si le produit de V et k donne un nombre pair
+    def test_regular_when_product_of_V_and_k_is_not_even_should_raise_valueError(self):
+        for nbVertices in range(3, 6):
+            for k in range(0, nbVertices):
+                if((nbVertices*k)%2==1):
+                    self.assertRaises(ValueError, generators.regular, nbVertices, k)
+                else:
+                    generators.regular(nbVertices, k) # ne doit pas lancer d'erreur
+
 
 if __name__ == '__main__':
     unittest.main()

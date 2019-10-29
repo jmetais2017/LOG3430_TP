@@ -5,12 +5,241 @@ from Queue import Queue
 
 class TestQueue(unittest.TestCase):
 
-    #on suppose que setup et teardown doivent etre presents par convention
     def setUp(self):
         pass
 
     def tearDown(self):
         pass
+
+
+    #Tranche 1 : attribut "first"
+
+    def testSeq1First(self):
+        #Constructor
+        queue = Queue()
+
+        #Reporter : Une queue vide doit lancer une erreur si on essaie de récupérer le premier élément
+        self.assertRaises(ValueError, queue.check_first)
+
+        #Transformer : Ajoutons l'élément 0 à la queue
+        queue.enqeue(0)
+
+        #Reporter : Récupérons le premier élément
+        self.assertEqual(str(queue.check_first()), str(0))
+
+        #Transformer : Retirons l'élément 0 de la queue
+        self.assertEqual(str(queue.dequeue()), str(0))
+
+        #Reporter : Une queue vide doit lancer une erreur si on essaie de récupérer le premier élément
+        self.assertRaises(ValueError, queue.check_first)
+
+
+    def testSeq2First(self):
+        #Constructor
+        queue = Queue()
+
+        #Reporter : Une queue vide doit lancer une erreur si on essaie de récupérer le premier élément
+        self.assertRaises(ValueError, queue.check_first)
+
+        #Transformer : Une queue vide doit lancer une erreur si on essaie de retirer le premier élément
+        self.assertRaises(ValueError, queue.dequeue)
+
+        #Reporter : Une queue vide doit lancer une erreur si on essaie de récupérer le premier élément
+        self.assertRaises(ValueError, queue.check_first)
+
+        #Transformer : Ajoutons l'élément 0 à la queue
+        queue.enqeue(0)
+
+        #Reporter : Récupérons le premier élément
+        self.assertEqual(str(queue.check_first()), str(0))
+
+
+
+    #Tranche 2 : attribut "last"
+
+    def testSeq1Last(self):
+        #Constructor
+        queue = Queue()
+
+        #Reporter : Une queue vide doit lancer une erreur si on essaie de récupérer le dernier élément
+        self.assertRaises(ValueError, queue.check_last)
+
+        #Transformer : Ajoutons l'élément 0 à la queue
+        queue.enqeue(0)
+
+        #Reporter : Une queue contenant un seul élément doit lancer une erreur si on essaie de récupérer le dernier élément
+        self.assertRaises(ValueError, queue.check_last)
+
+        #Transformer : Retirons l'élément 0 de la queue
+        self.assertEqual(str(queue.dequeue()), str(0))
+
+        #Reporter : Une queue vide doit lancer une erreur si on essaie de récupérer le dernier élément
+        self.assertRaises(ValueError, queue.check_last)
+
+
+    def testSeq2Last(self):
+        #Constructor
+        queue = Queue()
+
+        #Reporter : Une queue vide doit lancer une erreur si on essaie de récupérer le dernier élément
+        self.assertRaises(ValueError, queue.check_last)
+
+        #Transformer : Une queue vide doit lancer une erreur si on essaie de retirer le premier élément
+        self.assertRaises(ValueError, queue.dequeue)
+
+        #Reporter : Une queue vide doit lancer une erreur si on essaie de récupérer le dernier élément
+        self.assertRaises(ValueError, queue.check_last)
+
+        #Transformer : Ajoutons l'élément 0 à la queue
+        queue.enqeue(0)
+
+        #Reporter : Une queue contenant un seul élément doit lancer une erreur si on essaie de récupérer le dernier élément
+        self.assertRaises(ValueError, queue.check_last)
+
+
+
+    #Tranche 3 : attribut "n"
+
+    def testSeq1N(self):
+        #Constructor
+        queue = Queue()
+
+        #Reporter : Récupérons la longueur de la queue
+        self.assertEqual(str(queue.size()), str(0))
+
+        #Transformer : Ajoutons l'élément 0 à la queue
+        queue.enqeue(0)
+
+        #Reporter : Récupérons la longueur de la queue
+        self.assertEqual(str(queue.size()), str(1))
+
+        #Transformer : Retirons l'élément 0 de la queue
+        self.assertEqual(str(queue.dequeue()), str(0))
+
+        #Reporter : Récupérons la longueur de la queue
+        self.assertEqual(str(queue.size()), str(0))
+
+        #Other : Une queue vide doit lancer une erreur si on essaie de récupérer le dernier élément
+        self.assertRaises(ValueError, queue.check_last)
+
+
+    def testSeq2N(self):
+        #Constructor
+        queue = Queue()
+
+        #Reporter : Récupérons la longueur de la queue
+        self.assertEqual(str(queue.size()), str(0))
+
+        #Transformer : Une queue vide doit lancer une erreur si on essaie de retirer le premier élément
+        self.assertRaises(ValueError, queue.dequeue)
+
+        #Reporter : Récupérons la longueur de la queue
+        self.assertEqual(str(queue.size()), str(0))
+
+        #Transformer : Ajoutons l'élément 0 à la queue
+        queue.enqeue(0)
+
+        #Reporter : Récupérons la longueur de la queue
+        self.assertEqual(str(queue.size()), str(1))
+
+        #Other : La queue contient un élément
+        self.assertTrue(queue.hasOne())
+
+
+
+    #Tranche 4 : attribut "full"
+
+    def testSeq1Full(self):
+        #Constructor
+        queue = Queue()
+
+        #Reporter : La queue n'est pas pleine
+        self.assertFalse(queue.isFull())
+
+        #Transformer : Ajoutons l'élément 0 à la queue
+        queue.enqeue(0)
+
+        #Reporter : La queue n'est pas pleine
+        self.assertFalse(queue.isFull())
+
+        #Transformer : Retirons l'élément 0 de la queue
+        self.assertEqual(str(queue.dequeue()), str(0))
+
+        #Reporter : La queue n'est pas pleine
+        self.assertFalse(queue.isFull())
+
+
+
+    def testSeq2Full(self):
+        #Constructor
+        queue = Queue()
+
+        #Reporter : La queue n'est pas pleine
+        self.assertFalse(queue.isFull())
+
+        #Transformer : Une queue vide doit lancer une erreur si on essaie de retirer le premier élément
+        self.assertRaises(ValueError, queue.dequeue)
+
+        #Reporter : La queue n'est pas pleine
+        self.assertFalse(queue.isFull())
+
+        #Transformer : Ajoutons l'élément 0 à la queue
+        queue.enqeue(0)
+
+        #Reporter : La queue n'est pas pleine
+        self.assertFalse(queue.isFull())
+
+
+
+    #Tranche 5 : attribut "empty"
+
+    def testSeq1Empty(self):
+        #Constructor
+        queue = Queue()
+
+        #Reporter : La queue est vide
+        self.assertTrue(queue.isEmpty())
+
+        #Transformer : Ajoutons l'élément 0 à la queue
+        queue.enqeue(0)
+
+        #Reporter : La queue n'est pas vide
+        self.assertFalse(queue.isEmpty())
+
+        #Transformer : Retirons l'élément 0 de la queue
+        self.assertEqual(str(queue.dequeue()), str(0))
+
+        #Reporter : La queue est vide
+        self.assertTrue(queue.isEmpty())
+
+        #Other : Une queue contenant vide doit lancer une erreur si on essaie de récupérer le premier élément
+        self.assertRaises(ValueError, queue.check_first)
+
+
+
+    def testSeq2Empty(self):
+        #Constructor
+        queue = Queue()
+
+        #Reporter : La queue est vide
+        self.assertTrue(queue.isEmpty())
+
+        #Transformer : Une queue vide doit lancer une erreur si on essaie de retirer le premier élément
+        self.assertRaises(ValueError, queue.dequeue)
+
+        #Reporter : La queue est vide
+        self.assertTrue(queue.isEmpty())
+
+        #Transformer : Ajoutons l'élément 0 à la queue
+        queue.enqeue(0)
+
+        #Reporter : La queue n'est pas vide
+        self.assertFalse(queue.isEmpty())
+
+        #Other : Une queue contenant un seul élément doit lancer une erreur si on essaie de récupérer le dernier élément
+        self.assertRaises(ValueError, queue.check_last)
+
+
 
     #tests pour une queue vide
     def testEmptyQueue(self):
@@ -109,11 +338,11 @@ class TestQueue(unittest.TestCase):
         self.assertEqual(queue.size(),1)
         self.assertTrue(queue.hasOne)
         self.assertRaises(ValueError, queue.check_last)
-        
+
         self.assertEqual(str(queue.check_first()), str(99))
         self.assertEqual(str(queue.dequeue()), str(99))
 
-        self.assertEquals(queue.size(),0)
+        self.assertEqual(queue.size(),0)
         self.assertTrue(queue.hasOne)
         self.assertRaises(ValueError, queue.check_first)
         self.assertRaises(ValueError, queue.check_last)

@@ -211,8 +211,25 @@ class TestQueue(unittest.TestCase):
                     self.assertEqual(str(stack), s)
 
                     #tester que stack va lancer une exception pour trial fois
-                    for nb in range(0, trial):
+                    for nb in range(1, trial):
                         self.assertRaises(ValueError, stack.push, "fail")
+
+                        #tester que l'etat demeure plein
+                        self.assertFalse(stack.isEmpty())
+                        self.assertEqual(stack.size(), size)
+                        self.assertTrue(stack.isFull())
+                        self.assertEqual(stack.peek(), "last")
+                        self.assertEqual(str(stack), s)
+
+                    #tester le dernier push errone avant que la taille de la pile augmente
+                    self.assertRaises(ValueError, stack.push, "fail")
+
+                    #tester l'etat normal
+                    self.assertFalse(stack.isEmpty())
+                    self.assertEqual(stack.size(), size)
+                    self.assertFalse(stack.isFull())
+                    self.assertEqual(stack.peek(), "last")
+                    self.assertEqual(str(stack), s)
 
                     #tester le push increment fois
                     for i in range(1, increment):

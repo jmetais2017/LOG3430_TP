@@ -65,6 +65,6 @@ class Stack :
 		result = "|"
 		node = self.first
 		while node:
-			result += str(node.value) + "|"
+			result += str(node) + "|"
 			node = node.next
 		return result

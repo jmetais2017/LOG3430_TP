@@ -27,7 +27,7 @@ class LinkedList :
 	def check(self):
 		if self.isEmpty():
 			raise ValueError("linked list underflow")
-		return self.first
+		return self.first.value
 	
 	#Removes and returns the first item in the linked list
 	def peek(self):

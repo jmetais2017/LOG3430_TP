@@ -118,11 +118,11 @@
     <coordinates>
       <x>588</x>
       <y>98</y>
-      <w>56</w>
+      <w>70</w>
       <h>112</h>
     </coordinates>
     <panel_attributes>lt=-&gt;
-A</panel_attributes>
+Ag</panel_attributes>
     <additional_attributes>10.0;60.0;10.0;10.0</additional_attributes>
   </element>
   <element>
@@ -182,7 +182,7 @@ I</panel_attributes>
       <h>98</h>
     </coordinates>
     <panel_attributes>lt=-&gt;
-A</panel_attributes>
+As</panel_attributes>
     <additional_attributes>10.0;50.0;10.0;10.0</additional_attributes>
   </element>
   <element>
@@ -194,7 +194,7 @@ A</panel_attributes>
       <h>56</h>
     </coordinates>
     <panel_attributes>lt=-&gt;
-A</panel_attributes>
+As</panel_attributes>
     <additional_attributes>50.0;20.0;10.0;20.0</additional_attributes>
   </element>
   <element>
@@ -206,7 +206,7 @@ A</panel_attributes>
       <h>56</h>
     </coordinates>
     <panel_attributes>lt=-&gt;
-A</panel_attributes>
+As</panel_attributes>
     <additional_attributes>10.0;20.0;50.0;20.0</additional_attributes>
   </element>
   <element>
@@ -218,7 +218,7 @@ A</panel_attributes>
       <h>140</h>
     </coordinates>
     <panel_attributes>lt=-&gt;
-A</panel_attributes>
+As</panel_attributes>
     <additional_attributes>50.0;80.0;10.0;10.0</additional_attributes>
   </element>
   <element>
@@ -230,7 +230,7 @@ A</panel_attributes>
       <h>140</h>
     </coordinates>
     <panel_attributes>lt=-&gt;
-A</panel_attributes>
+As</panel_attributes>
     <additional_attributes>10.0;80.0;70.0;10.0</additional_attributes>
   </element>
   <element>

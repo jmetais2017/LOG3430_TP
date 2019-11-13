@@ -11,45 +11,47 @@ class TestQueue(unittest.TestCase):
     def tearDown(self):
         pass
 
-    #test du chemin empty-pop
+
+    #Test du chemin empty-pop-empty (C1)
     def test_path_empty_pop(self):
         stack = Stack(5, 5, 5)
 
-        #verification de l'etat initial
+        #Vérification de l'état initial
         self.assertTrue(stack.isEmpty())
         self.assertEqual(stack.size(), 0)
         self.assertFalse(stack.isFull())
         self.assertRaises(ValueError, stack.peek)
         self.assertEqual(str(stack),"|")
 
-        #tester le chemin a laide la fonction pop
+        #Test du chemin à l'aide de la fonction pop
         self.assertRaises(ValueError, stack.pop)
 
-    #test du chemin empty-push-normal-pop-empty
+
+    #Test du chemin empty-push-normal-pop-empty (C2)
     def test_path_empty_push_normal_pop_empty(self):
         stack = Stack(5,5,5)
 
-        #verification de l'etat initial
+        #Vérification de l'état initial
         self.assertTrue(stack.isEmpty())
         self.assertEqual(stack.size(), 0)
         self.assertFalse(stack.isFull())
         self.assertRaises(ValueError, stack.peek)
         self.assertEqual(str(stack),"|")
 
-        #tester la transition
+        #Application de la transition
         stack.push("first")
 
-        #verification de l'etat normal
+        #Vérification de l'état "normal"
         self.assertFalse(stack.isEmpty())
         self.assertEqual(stack.size(), 1)
         self.assertFalse(stack.isFull())
         self.assertEqual(stack.peek(), "first")
         self.assertEqual(str(stack),"|first|")
 
-        #tester la transition
+        #Application de la transition
         self.assertEqual(stack.pop(),"first")
 
-        #verification de l'etat empty
+        #Vérification de l'état "empty"
         self.assertTrue(stack.isEmpty())
         self.assertEqual(stack.size(), 0)
         self.assertFalse(stack.isFull())
@@ -57,14 +59,15 @@ class TestQueue(unittest.TestCase):
         self.assertRaises(ValueError, stack.pop)
         self.assertEqual(str(stack),"|")
 
-    #tester le chemin empty-(push-normal)*-(pop-normal)*-pop-empty
+
+    #Test du chemin empty-(push-normal)*-(pop-normal)*-pop-empty (extension de C2)
     def test_path_multiple_push(self):
 
-        #tester divers choix de tailles
-        for size in range(3, 10):
+        #Testons divers choix de nombre d'éléments à ajouter puis retirer
+        for elem in range(3, 10):
             stack = Stack(20, 20, 20)
 
-            #verification de l'etat initial
+            #Vérification de l'état initial
             self.assertTrue(stack.isEmpty())
             self.assertEqual(stack.size(), 0)
             self.assertFalse(stack.isFull())
@@ -73,33 +76,31 @@ class TestQueue(unittest.TestCase):
 
             s = "|"
 
-            #tester le push size fois
-            for k in range(1, size):
+            #Appliquons le push "elem" fois
+            for k in range(1, elem):
 
-                #tester la transition
                 stack.push(k)
                 s = "|"+str(k)+s
 
-                #tester l'etat normal
+                #Vérification de l'état "normal"
                 self.assertFalse(stack.isEmpty())
                 self.assertEqual(stack.size(), k)
                 self.assertFalse(stack.isFull())
                 self.assertEqual(stack.peek(), k)
                 self.assertEqual(str(stack),s)
 
-            #tester le pop size fois
-            for k in range(size-1, 0, -1):
+            #Appliquons le pop "elem" fois
+            for k in range(elem-1, 0, -1):
 
-                #tester l'etat normal
+                #Vérification de l'état "normal"
                 self.assertFalse(stack.isEmpty())
                 self.assertEqual(stack.size(), k)
                 self.assertFalse(stack.isFull())
                 self.assertEqual(stack.peek(), k)
 
-                #tester la transition
                 self.assertEqual(stack.pop(), k)
 
-        #tester l'etat empty
+        #Vérification de l'état "empty"
         self.assertTrue(stack.isEmpty())
         self.assertEqual(stack.size(), 0)
         self.assertFalse(stack.isFull())
@@ -107,60 +108,58 @@ class TestQueue(unittest.TestCase):
         self.assertRaises(ValueError, stack.pop)
         self.assertEqual(str(stack),"|")
 
-    #tester le chemin empty-(push-normal)*-push-full-(pop-normal)*-pop-empty
+
+    #Test du chemin empty-(push-normal)*-push-full-(pop-normal)*-pop-empty (C3)
     def test_push_to_full(self):
 
-        #tester divers choix de tailles
+        #Testons divers choix de tailles
         for size in range(3, 10):
             stack = Stack(size, 20, 20)
             s = "|"
 
-            #verification de l'etat initial
+            #Vérification de l'état initial
             self.assertTrue(stack.isEmpty())
             self.assertEqual(stack.size(), 0)
             self.assertFalse(stack.isFull())
             self.assertRaises(ValueError, stack.peek)
             self.assertEqual(str(stack),"|")
 
-            #tester le push size fois
+            #Appliquons le push "size" fois
             for k in range(1, size):
 
-                #tester la transition
                 stack.push(k)
                 s = "|"+str(k)+s
 
-                #tester l'etat normal
+                #Vérification de l'état "normal"
                 self.assertFalse(stack.isEmpty())
                 self.assertEqual(stack.size(), k)
                 self.assertFalse(stack.isFull())
                 self.assertEqual(stack.peek(), k)
                 self.assertEqual(str(stack), s)
 
-            #tester la transition
             stack.push("last")
 
-            #tester l'etat plein
+            #Vérification de l'état "full"
             self.assertFalse(stack.isEmpty())
             self.assertEqual(stack.size(), size)
             self.assertTrue(stack.isFull())
             self.assertEqual(stack.peek(), "last")
 
-            #tester la transition
+            #Application de la transition
             self.assertTrue(stack.pop(), "last")
 
-            #tester le push size fois
+            #Appliquons le pop "size" fois
             for k in range(size-1, 0, -1):
 
-                #tester l'etat normal
+                #Vérification de l'état "normal"
                 self.assertFalse(stack.isEmpty())
                 self.assertEqual(stack.size(), k)
                 self.assertFalse(stack.isFull())
                 self.assertEqual(stack.peek(), k)
 
-                #tester la transition
                 self.assertEqual(stack.pop(), k)
 
-        #tester l'etat empty
+        #Vérification de l'état "empty"
         self.assertTrue(stack.isEmpty())
         self.assertEqual(stack.size(), 0)
         self.assertFalse(stack.isFull())
@@ -168,123 +167,116 @@ class TestQueue(unittest.TestCase):
         self.assertRaises(ValueError, stack.pop)
         self.assertEqual(str(stack),"|")
 
-    #tester le chemin empty-(push-normal)*-push-full-(push-full)*-(push-normal)*-push-full-(pop-normal)*-pop-empty
+
+    #Test du chemin empty-(push-normal)*-push-full-(push-full)*-(push-normal)*-push-full-(pop-normal)*-pop-empty (C4)
     def test_push_to_full_then_increment(self):
 
-        #tester divers combinaisons de size, trial et increment
+        #Testons diverses combinaisons de size, trial et increment
         for size in range(5, 10):
             for trial in range(5, 10):
                 for increment in range(5, 10):
                     stack = Stack(size, trial, increment)
                     s = "|"
 
-                    #verification de l'etat initial
+                    #Vérification de l'état initial
                     self.assertTrue(stack.isEmpty())
                     self.assertEqual(stack.size(), 0)
                     self.assertFalse(stack.isFull())
                     self.assertRaises(ValueError, stack.peek)
                     self.assertEqual(str(stack),"|")
 
-                    #tester le push size fois
+                    #Appliquons le push "size" fois
                     for k in range(1, size):
 
-                        #tester la transition
                         stack.push(k)
                         s = "|"+str(k)+s
 
-                        #tester l'etat normal
+                        #Vérification de l'état "normal"
                         self.assertFalse(stack.isEmpty())
                         self.assertEqual(stack.size(), k)
                         self.assertFalse(stack.isFull())
                         self.assertEqual(stack.peek(), k)
                         self.assertEqual(str(stack), s)
 
-                    #tester la transition
                     stack.push("last")
                     s = "|last"+s
 
-                    #tester l'etat plein
+                    #Vérification de l'état "full"
                     self.assertFalse(stack.isEmpty())
                     self.assertEqual(stack.size(), size)
                     self.assertTrue(stack.isFull())
                     self.assertEqual(stack.peek(), "last")
                     self.assertEqual(str(stack), s)
 
-                    #tester que stack va lancer une exception pour trial fois
+                    #Vérifions que stack lance une exception pour les trial premiers ajouts
                     for nb in range(1, trial):
                         self.assertRaises(ValueError, stack.push, "fail")
 
-                        #tester que l'etat demeure plein
+                        #Vérification de l'état "full"
                         self.assertFalse(stack.isEmpty())
                         self.assertEqual(stack.size(), size)
                         self.assertTrue(stack.isFull())
                         self.assertEqual(stack.peek(), "last")
                         self.assertEqual(str(stack), s)
 
-                    #tester le dernier push errone avant que la taille de la pile augmente
+                    #Testons le dernier push erroné avant que la taille de la pile n'augmente
                     self.assertRaises(ValueError, stack.push, "fail")
 
-                    #tester l'etat normal
+                    #Vérification de l'état "normal"
                     self.assertFalse(stack.isEmpty())
                     self.assertEqual(stack.size(), size)
                     self.assertFalse(stack.isFull())
                     self.assertEqual(stack.peek(), "last")
                     self.assertEqual(str(stack), s)
 
-                    #tester le push increment fois
+                    #Appliquons le push "increment" fois
                     for i in range(1, increment):
 
-                        #tester la transition
                         stack.push(i)
                         s = "|"+str(i)+s
 
-                        #tester l'etat normal
+                        #Vérification de l'état "normal"
                         self.assertFalse(stack.isEmpty())
                         self.assertEqual(stack.size(), size+i)
                         self.assertFalse(stack.isFull())
                         self.assertEqual(stack.peek(), i)
                         self.assertEqual(str(stack),s)
 
-                    #tester la transition
                     stack.push("end")
 
-                    #tester l'etat full une 2eme fois
+                    #Vérification de l'état "full"
                     self.assertFalse(stack.isEmpty())
                     self.assertEqual(stack.size(), size+increment)
                     self.assertTrue(stack.isFull())
                     self.assertEqual(stack.peek(), "end")
 
-                    #tester la transition
                     self.assertEqual(stack.pop(), "end")
 
-                    #tester le pop increment fois
+                    #Appliquons le pop "increment" fois
                     for i in range(increment-1, 0, -1):
 
-                        #tester l'etat normal
+                        #Vérification de l'état "normal"
                         self.assertFalse(stack.isEmpty())
                         self.assertEqual(stack.size(), size+i)
                         self.assertFalse(stack.isFull())
                         self.assertEqual(stack.peek(), i)
 
-                        #tester la transition
                         self.assertEqual(stack.pop(), i)
 
-                    #tester la transition
                     self.assertTrue(stack.pop(), "last")
 
-                    #tester le pop size fois
+                    #Appliquons le pop "size" fois
                     for k in range(size-1, 0, -1):
 
-                        #tester l'etat normal
+                        #Vérification de l'état "normal"
                         self.assertFalse(stack.isEmpty())
                         self.assertEqual(stack.size(), k)
                         self.assertFalse(stack.isFull())
                         self.assertEqual(stack.peek(), k)
 
-                        #tester la transition
                         self.assertEqual(stack.pop(), k)
 
-                #tester l'etat empty
+                #Vérification de l'état "empty"
                 self.assertTrue(stack.isEmpty())
                 self.assertEqual(stack.size(), 0)
                 self.assertFalse(stack.isFull())

@@ -14,7 +14,6 @@ from TestAutoAdaptiveQueue import TestAutoAdaptiveQueue
 
 from TestCalculator import TestCalculator
 
-from TestPrinter import TestPrinter
 from TestScreenPrinter import TestScreenPrinter
 from TestFilePrinter import TestFilePrinter
 

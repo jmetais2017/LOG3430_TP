@@ -139,6 +139,12 @@ class TestCalculator(unittest.TestCase):
                 self.assertEqual(resultat.max_size, stack1.max_size + stack2.max_size)
                 self.assertEqual(resultat.size(), stack1.size() + stack2.size())
 
+                for k in range(9, -1, -1):
+                    self.assertEqual(resultat.pop(), k+j*1000)
+
+                for k in range(9, -1, -1):
+                    self.assertEqual(resultat.pop(), k+i*100)
+
     def testUnionTwoQueues(self):
 
         for i in range(5):
@@ -160,6 +166,12 @@ class TestCalculator(unittest.TestCase):
 
                 self.assertEqual(resultat.max_size, queue1.max_size + queue2.max_size)
                 self.assertEqual(resultat.size(), queue1.size() + queue2.size())
+
+                for k in range(10):
+                    self.assertEqual(resultat.dequeue(), k+i*100)
+
+                for k in range(10):
+                    self.assertEqual(resultat.dequeue(), k+j*1000)
 
 #pour tester Calculator uniquement
 if __name__ == '__main__':

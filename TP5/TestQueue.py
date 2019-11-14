@@ -17,6 +17,7 @@ class TestQueue(unittest.TestCase):
             queue = Queue(size)
             self.assertEqual(queue.max_size, size)
             self.assertFalse(queue.isFull())
+            self.assertRaises(ValueError, queue.dequeue)
 
     def testEnqueueDequeue(self):
 
@@ -60,6 +61,7 @@ class TestQueue(unittest.TestCase):
             self.assertTrue(queue.isEmpty())
             self.assertFalse(queue.isFull())
             self.assertEqual(queue.size(), 0)
+            self.assertRaises(ValueError, queue.dequeue)
 
 
 #pour tester Queue uniquement

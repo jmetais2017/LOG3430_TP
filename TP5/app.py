@@ -82,7 +82,7 @@ class Queue(LinkedList):
 		try:
 			return self.peek()
 		except ValueError:
-			print("Queue underflow")
+			raise ValueError("Queue underflow")
 
 class Stack(LinkedList): 
 	# Initializes an empty stack.
@@ -105,7 +105,7 @@ class Stack(LinkedList):
 		try:
 			return self.peek()
 		except ValueError:
-			print("Stack underflow")
+			raise ValueError("Stack underflow")
 
 class AutoAdaptiveStack(Stack): 
 

@@ -17,6 +17,7 @@ class TestStack(unittest.TestCase):
             stack = Stack(size)
             self.assertEqual(stack.max_size, size)
             self.assertFalse(stack.isFull())
+            self.assertRaises(ValueError, stack.pop)
 
     def testPushPop(self):
         for size in range(5,10):
@@ -59,6 +60,7 @@ class TestStack(unittest.TestCase):
             
             self.assertTrue(stack.isEmpty())
             self.assertFalse(stack.isFull())
+            self.assertRaises(ValueError, stack.pop)
 
 
 #pour tester Stack uniquement

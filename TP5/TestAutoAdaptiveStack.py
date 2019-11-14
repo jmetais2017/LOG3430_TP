@@ -1,16 +1,19 @@
 import unittest
 import unittest.mock
 import os
+import io
+import sys
 
 from app import AutoAdaptiveStack
 
 class TestAutoAdaptiveStack(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.capturedOutput = io.StringIO()
+        sys.stdout = self.capturedOutput  
 
     def tearDown(self):
-        pass
+        sys.stdout = sys.__stdout__  
 
     def testInit(self):
         for max_size in range(5,10):

@@ -109,39 +109,75 @@ class Stack(LinkedList):
 
 class AutoAdaptiveStack(Stack): 
 
-	def __init__(self, max_trials, size_increment, *args, **kwargs):
+	def __init__(self, max_trials, size_increment, waitingQueueSize, *args, **kwargs):
 		self.max_trials = max_trials
 		self.size_increment = size_increment
 		self.trials = 0
+		self.waitingQueue = Queue(waitingQueueSize)
 		super(AutoAdaptiveStack, self).__init__(*args, **kwargs)
 
 	def push(self, item):
 		try:
 			super(AutoAdaptiveStack, self).push(item)
 		except:
-			print("There is no free space actually :( try later")
+
+			try:
+				self.waitingQueue.enqueue(item)
+			except:
+				print("There is no free space actually :( try later")
+
 			self.trials += 1
 			if self.trials == self.max_trials:
 				self.max_size += self.size_increment
 				self.trials = 0
+
+				while not self.isFull() and not self.waitingQueue.isEmpty():
+					self.push(self.waitingQueue.dequeue())
+
+	#redefinition de pop
+	def pop(self):
+		elem = super(AutoAdaptiveStack, self).pop()
+
+		if not self.waitingQueue.isEmpty():
+			self.push(self.waitingQueue.dequeue())
+
+		return elem
 	
 class AutoAdaptiveQueue(Queue): 
 
-	def __init__(self, max_trials, size_increment, *args, **kwargs):
+	def __init__(self, max_trials, size_increment, waitingQueueSize, *args, **kwargs):
 		self.max_trials = max_trials
 		self.size_increment = size_increment
 		self.trials = 0
+		self.waitingQueue = Queue(waitingQueueSize)
 		super(AutoAdaptiveQueue, self).__init__(*args, **kwargs)
 
 	def enqueue(self, item):
 		try:
 			super(AutoAdaptiveQueue, self).enqueue(item)
 		except ValueError:
-			print("There is no free space actually :( try later")
+			
+			try:
+				self.waitingQueue.enqueue(item)
+			except:
+				print("There is no free space actually :( try later")
+			
 			self.trials += 1
 			if self.trials == self.max_trials:
 				self.max_size += self.size_increment
 				self.trials = 0
+
+				while not self.isFull() and not self.waitingQueue.isEmpty():
+					self.enqueue(self.waitingQueue.dequeue())
+
+	#redefinition de dequeue
+	def dequeue(self):
+		ret = super(AutoAdaptiveQueue, self).dequeue()
+		
+		if not self.waitingQueue.isEmpty():
+			self.enqueue(self.waitingQueue.dequeue())
+
+		return ret
 		
 class Printer(object, metaclass=abc.ABCMeta):
 	def __init__(self, name):

@@ -2,19 +2,15 @@ import unittest
 import unittest.mock
 import os
 
-from app import Node, LinkedList, Queue, Stack, Calculator
+from app import LinkedList, Queue, Stack, Calculator
 
 def contient(liste, valeur):
     
-    noeud = liste.first
+    for elem in liste.list:
+        if elem == valeur:
+            return True
 
-    while noeud.value != valeur:
-        if noeud.next:
-            noeud = noeud.next
-        else:
-            return False
-
-    return True
+    return False
 
 class TestCalculator(unittest.TestCase):
 
@@ -26,7 +22,7 @@ class TestCalculator(unittest.TestCase):
 
     def testInvalidUnion(self):
         for obj in [LinkedList(), Stack(5), Queue(5)]:
-            for invalid in [1, "fail", -3.4, Node(1)]:
+            for invalid in [1, "fail", -3.4]:
                 self.assertRaises(ValueError, Calculator.union, obj, invalid)
 
 
@@ -54,23 +50,15 @@ class TestCalculator(unittest.TestCase):
 
                 for k in range(len(listes)):
                     if k==i:
-                        noeud = listes[i].first
-
-                        while noeud.next:
-                            self.assertTrue(contient(resultat, noeud.value))
-                            noeud = noeud.next
+                        for elem in listes[k].list:
+                            self.assertTrue(contient(resultat, elem))
+                            
                     elif k==j:
-                        noeud = listes[j].first
-
-                        while noeud.next:
-                            self.assertTrue(contient(resultat, noeud.value))
-                            noeud = noeud.next
+                        for elem in listes[k].list:
+                            self.assertTrue(contient(resultat, elem))
                     else:
-                        noeud = listes[k].first
-
-                        while noeud.next:
-                            self.assertFalse(contient(resultat, noeud.value))
-                            noeud = noeud.next
+                        for elem in listes[k].list:
+                            self.assertFalse(contient(resultat, elem))
 
     def testUnionStackAndQueue(self):
         stacks = []
@@ -104,18 +92,11 @@ class TestCalculator(unittest.TestCase):
                 self.assertEqual(resultat.size(), stack.size() + queue.size())
 
 
-                noeud = stack.first
+                for elem in stack.list:
+                    self.assertTrue(contient(resultat, elem))
 
-                while noeud.next:
-                    self.assertTrue(contient(resultat, noeud.value))
-                    noeud = noeud.next
-
-
-                noeud = queue.first
-
-                while noeud.next:
-                    self.assertTrue(contient(resultat, noeud.value))
-                    noeud = noeud.next
+                for elem in queue.list:
+                    self.assertTrue(contient(resultat, elem))
 
     def testUnionTwoStacks(self):
 

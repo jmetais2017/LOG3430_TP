@@ -1,62 +1,37 @@
 import random as rand
 import abc
 
-class Node:
-	def __init__(self, value):
-		self.value = value
-		self.next = None # the pointer initially points to nothing
-
-	def __str__(self):
-		return str(self.value)
-
 class LinkedList : 
 	# Initializes an empty linked list.
 	def __init__(self):
-		self.first = None  # beginning of linked list
-		self.n = 0  # number of elements on linked list
-
-	# Returns true if this linked list is empty.
-	def isEmpty(self):
-		return self.n == 0
+		self.list = []  # beginning of linked list
 
 	# Returns the number of items in this linked list.
 	def size(self):
-		return self.n
+		return len(self.list)
+
+	# Returns true if this linked list is empty.
+	def isEmpty(self):
+		return self.size() == 0
 	
 	# Returns the first item added to this linked list 
 	def check(self):
 		if self.isEmpty():
-			raise ValueError("linked list underflow")
-		return self.first.value
+			raise ValueError("linked list underflow: ")
+		return self.list[0]
 	
 	#Removes and returns the first item in the linked list
 	def peek(self):
 		if self.isEmpty():
 			raise ValueError("linked list underflow")
-		item = self.first.value
-		self.first= self.first.next
-		self.n -= 1
-		return item
+
+		return self.list.pop(0)
 
 	def append(self, item):
-		new_node = Node(item)
-		if self.isEmpty():
-			self.first = new_node
-		else:
-			last_node = self.first
-			while last_node.next:
-				last_node = last_node.next
-			last_node.next = new_node
-		self.n += 1
+		self.list.append(item)
 
 	def prepend(self, item):
-		new_node = Node(item)
-		if self.isEmpty():
-			self.first = new_node
-		else:
-			new_node.next = self.first 
-			self.first = new_node
-		self.n += 1
+		self.list.insert(0, item)
 
 	def accept(self, visitor):
 		visitor.visit(self)
@@ -69,7 +44,7 @@ class Queue(LinkedList):
 		super(Queue, self).__init__(*args, **kwargs)
 
 	def isFull(self):
-		return self.n == self.max_size
+		return self.size() == self.max_size
 
 	# Adds the item to this queue.
 	def enqueue(self, item):
@@ -92,7 +67,7 @@ class Stack(LinkedList):
 
 	# Returns true if this stack is full.
 	def isFull(self):
-		return self.n == self.max_size
+		return self.size() == self.max_size
 
 	# Adds the item to this stack.
 	def push(self, item):
@@ -186,25 +161,21 @@ class Printer(object, metaclass=abc.ABCMeta):
 	def visit(self, list_obj):
 		if isinstance(list_obj, Stack):
 			display_message = "\n-------\n"
-			node = list_obj.first
-			while node:
-				display_message += '   '+str(node.value)+'   '
+			for elem in list_obj.list:
+				display_message += '   '+str(elem)+'   '
 				display_message += "\n-------\n"
-				node = node.next
 		elif isinstance(list_obj, Queue):
 			display_message = "\n|"
-			node = list_obj.first
-			while node:
-				display_message += str(node.value) + "|"
-				node = node.next
+			for elem in list_obj.list:
+				display_message += str(elem) + "|"
 			display_message += "\n"
 		else:
 			display_message = "\n("
-			node = list_obj.first
-			while node.next:
-				display_message += str(node.value) + ","
-				node = node.next
-			display_message += str(node.value) + ")\n"
+			for elem in list_obj.list:
+				display_message += str(elem)
+				if elem != list_obj.list[len(list_obj.list)-1]:
+					display_message += ","
+			display_message += ")\n"
 		self.log(display_message)
 	
 	@abc.abstractmethod
@@ -234,40 +205,50 @@ class Calculator:
 	@staticmethod
 	def union(first_list, second_list):
 		if isinstance(first_list,Queue) and isinstance(second_list,Queue):
+
 			merged_queue = Queue(max_size=first_list.max_size+second_list.max_size)
-			merged_queue.first = first_list.first
-			last_node = merged_queue.first
-			while last_node.next:
-				last_node = last_node.next
-			last_node.next = second_list.first
-			merged_queue.n = first_list.n + second_list.n
+			for elem in first_list.list:
+				merged_queue.enqueue(elem)
+
+			for elem in second_list.list:
+				merged_queue.enqueue(elem)
+
 			return merged_queue
+
 		elif isinstance(first_list,Stack) and isinstance(second_list,Stack):
 			merged_stack = Stack(max_size=first_list.max_size+second_list.max_size)
-			merged_stack.first = second_list.first
-			last_node = merged_stack.first
-			while last_node.next:
-				last_node = last_node.next
-			last_node.next = first_list.first
-			merged_stack.n = first_list.n + second_list.n
+			for elem in reversed(first_list.list):
+				merged_stack.push(elem)
+
+			for elem in reversed(second_list.list):
+				merged_stack.push(elem)
+
 			return merged_stack
 		elif isinstance(first_list,LinkedList) and isinstance(second_list,LinkedList):
+			
+			list1 = first_list.list
+			list2 = second_list.list
+
+			first_list.list = first_list.list.copy()
+			second_list.list = second_list.list.copy()
+			
 			merged_list = LinkedList()
-			current_first = first_list.first
-			current_second = second_list.first
-			while current_first and current_second:
-				if rand.uniform(0,1) < 0.5:
-					merged_list.append(current_first.value)
-					current_first = current_first.next
+
+			while not first_list.isEmpty() and not second_list.isEmpty():
+				if(rand.uniform(0,1) < 0.5):
+					merged_list.append(first_list.peek())
 				else:
-					merged_list.append(current_second.value)
-					current_second = current_second.next
-			while current_first:
-				merged_list.append(current_first.value)
-				current_first = current_first.next
-			while current_second:
-				merged_list.append(current_second.value)
-				current_second = current_second.next
+					merged_list.append(second_list.peek())
+
+			while not first_list.isEmpty():
+				merged_list.append(first_list.peek())
+
+			while not second_list.isEmpty():
+				merged_list.append(second_list.peek())
+
+			first_list.list = list1
+			second_list.list = list2
+
 			return merged_list
 		else:
 			raise ValueError('The types of both lists are different')

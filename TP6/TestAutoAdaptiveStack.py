@@ -19,18 +19,22 @@ class TestAutoAdaptiveStack(unittest.TestCase):
         for max_size in range(5,10):
             for max_trials in range(5, 10):
                 for size_increment in range(5, 10):
-                    stack = AutoAdaptiveStack(max_trials, size_increment, max_size)
-                    
-                    self.assertEqual(stack.max_trials, max_trials)
-                    self.assertEqual(stack.size_increment, size_increment)
-                    self.assertEqual(stack.max_size, max_size)
-
+                    for queue_size in range(5, 10):
+                        stack = AutoAdaptiveStack(max_trials, size_increment, queue_size, max_size)
+                        
+                        self.assertEqual(stack.max_trials, max_trials)
+                        self.assertEqual(stack.size_increment, size_increment)
+                        self.assertEqual(stack.max_size, max_size)
+                        self.assertEqual(stack.waitingQueue.max_size, queue_size)
 
     def testPushPop(self):
         for size in range(5,10):
             for max_trials in range(5, 10):
                 for size_increment in range(5, 10):
-                    stack = AutoAdaptiveStack(max_trials, size_increment, size)
+                    
+                    queue_size = size_increment
+
+                    stack = AutoAdaptiveStack(max_trials, size_increment, queue_size, size)
                     stackSize = 0
                     
                     for i in range(1, size):
@@ -50,64 +54,63 @@ class TestAutoAdaptiveStack(unittest.TestCase):
                     self.assertTrue(stack.isFull())
                     self.assertEqual(stack.size(), size)
 
-                    for n in range(3):
-                        for i in range(max_trials-1):
-                            stack.push("fail")
-                            self.assertEqual(stack.check(), "last")
-                            self.assertFalse(stack.isEmpty())
-                            self.assertTrue(stack.isFull())
-                            self.assertEqual(stack.size(), stackSize)
-
-                        stack.push("fail")
-                        self.assertEqual(stack.check(), "last")
-                        self.assertFalse(stack.isEmpty())
-                        self.assertFalse(stack.isFull())
-                        self.assertEqual(stack.size(), stackSize)
-
-                        for i in range(1, size_increment):
-                            stack.push(i)
-                            stackSize += 1
-
-                            self.assertEqual(stack.check(), i)
-                            self.assertFalse(stack.isEmpty())
-                            self.assertFalse(stack.isFull())
-                            self.assertEqual(stack.size(), stackSize)
-
-                        stack.push("last")
-                        stackSize += 1
-
+                    for i in range(max_trials-1):
+                        stack.push("queue"+str(i))
                         self.assertEqual(stack.check(), "last")
                         self.assertFalse(stack.isEmpty())
                         self.assertTrue(stack.isFull())
                         self.assertEqual(stack.size(), stackSize)
 
-                    for n in range(3):
+                    stack.push("lastQueue")
 
-                        self.assertEqual(stack.pop(), "last")
+                    max = 0
+
+                    if queue_size >= max_trials:
+                        stackSize += max_trials
+                        self.assertEqual(stack.check(), "lastQueue")
+                        self.assertEqual(stack.pop(), "lastQueue")
+                        self.assertFalse(stack.isEmpty())
+                        self.assertFalse(stack.isFull())
                         stackSize -= 1
+                        self.assertEqual(stack.size(), stackSize)
+                        max = max_trials-1
+                    else:
+                        stackSize += queue_size
+                        self.assertFalse(stack.isEmpty())
+                        self.assertTrue(stack.isFull())
+                        self.assertEqual(stack.check(), "queue"+str(queue_size-1))
+                        self.assertEqual(stack.size(), stackSize)
+                        max = queue_size
 
-                        for i in range(size_increment-1, 0, -1):
-                            self.assertEqual(stack.pop(),i)
-                            self.assertFalse(stack.isEmpty())
-                            self.assertFalse(stack.isFull())
-                            stackSize -= 1
-                            self.assertEqual(stack.size(), stackSize)
+                    for i in range(max-1, -1, -1):
+                        self.assertEqual(stack.check(), "queue"+str(i))
+                        self.assertEqual(stack.pop(), "queue"+str(i))
 
-                    self.assertEqual(stack.pop(), "last")
-                    stackSize -= 1
-
-                    for i in range(size-1, 1, -1):
-                        self.assertEqual(stack.pop(),i)
                         self.assertFalse(stack.isEmpty())
                         self.assertFalse(stack.isFull())
                         stackSize -= 1
                         self.assertEqual(stack.size(), stackSize)
 
-                    self.assertEqual(stack.pop(),1)
+                    self.assertEqual(stack.check(), "last")
+                    self.assertEqual(stack.pop(), "last")
+                    self.assertFalse(stack.isEmpty())
+                    self.assertFalse(stack.isFull())
+                    stackSize -= 1
+                    self.assertEqual(stack.size(), stackSize)
 
+                    for i in range(size-1, 0, -1):
+                        self.assertFalse(stack.isEmpty())
+                        self.assertFalse(stack.isFull())
+                        self.assertEqual(stack.check(), i)
+                        self.assertEqual(stack.pop(), i)
+                        stackSize -= 1
+                        self.assertEqual(stack.size(), stackSize)
+
+                    self.assertRaises(ValueError, stack.check)
+                    self.assertRaises(ValueError, stack.pop)
+                    self.assertEqual(stack.size(), 0)
                     self.assertTrue(stack.isEmpty())
                     self.assertFalse(stack.isFull())
-                    self.assertEqual(stack.size(), 0)
 
 #pour tester AutoAdaptiveStack uniquement
 if __name__ == '__main__':
